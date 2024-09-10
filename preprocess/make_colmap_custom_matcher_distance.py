@@ -33,7 +33,7 @@ def read_images_metas(path):
     images_metas = {}
     with open(path, "r") as fid:
         while True:
-            line = fid.readline()
+            line = fid.readline(5_000_000)
             if not line:
                 break
             line = line.strip()
@@ -46,7 +46,7 @@ def read_images_metas(path):
                     "qvec": np.array(tuple(map(float, elems[1:5]))),
                     "tvec": np.array(tuple(map(float, elems[5:8]))),
                     }
-                elems = fid.readline().split()
+                elems = fid.readline(5_000_000).split()
 
     return images_metas
 

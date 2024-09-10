@@ -112,7 +112,7 @@ def read_cameras_text(path):
     cameras = {}
     with open(path, "r") as fid:
         while True:
-            line = fid.readline()
+            line = fid.readline(5_000_000)
             if not line:
                 break
             line = line.strip()
@@ -213,7 +213,7 @@ def read_images_text(path):
     images = {}
     with open(path, "r") as fid:
         while True:
-            line = fid.readline()
+            line = fid.readline(5_000_000)
             if not line:
                 break
             line = line.strip()
@@ -224,7 +224,7 @@ def read_images_text(path):
                 tvec = np.array(tuple(map(float, elems[5:8])))
                 camera_id = int(elems[8])
                 image_name = elems[9]
-                elems = fid.readline().split()
+                elems = fid.readline(5_000_000).split()
                 xys = np.column_stack(
                     [
                         tuple(map(float, elems[0::3])),
@@ -363,7 +363,7 @@ def read_points3D_text(path):
     points3D = {}
     with open(path, "r") as fid:
         while True:
-            line = fid.readline()
+            line = fid.readline(5_000_000)
             if not line:
                 break
             line = line.strip()
