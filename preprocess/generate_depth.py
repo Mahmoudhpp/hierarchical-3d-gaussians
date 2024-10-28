@@ -2,6 +2,7 @@ import os, sys
 import subprocess
 import argparse
 import time
+from security import safe_command
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -58,7 +59,7 @@ if __name__ == '__main__':
                 "--outdir", full_depth_path
             ] 
         try:
-            subprocess.run(generator_args, check=True, cwd=generator_dir)
+            safe_command.run(subprocess.run, generator_args, check=True, cwd=generator_dir)
         except subprocess.CalledProcessError as e:
             print(f"Error executing run_monodepth: {e}")
             sys.exit(1)

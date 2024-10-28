@@ -14,6 +14,7 @@ import subprocess
 import argparse
 from read_write_model import read_images_binary,write_images_binary, Image
 import time, platform
+from security import safe_command
 
 def replace_images_by_masks(images_file, out_file):
     """Replace images.jpg to images.png in the colmap images.bin to process masks the same way as images."""
@@ -84,7 +85,7 @@ if __name__ == '__main__':
         ]
     
     try:
-        subprocess.run(colmap_feature_extractor_args, check=True)
+        safe_command.run(subprocess.run, colmap_feature_extractor_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing colmap feature_extractor: {e}")
         sys.exit(1)
@@ -96,7 +97,7 @@ if __name__ == '__main__':
         "--output_path", f"{args.project_dir}/camera_calibration/unrectified/matching.txt"
     ]
     try:
-        subprocess.run(make_colmap_custom_matcher_args, check=True)
+        safe_command.run(subprocess.run, make_colmap_custom_matcher_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing make_colmap_custom_matcher: {e}")
         sys.exit(1)
@@ -109,7 +110,7 @@ if __name__ == '__main__':
         "--match_list_path", f"{args.project_dir}/camera_calibration/unrectified/matching.txt"
         ]
     try:
-        subprocess.run(colmap_matches_importer_args, check=True)
+        safe_command.run(subprocess.run, colmap_matches_importer_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing colmap matches_importer: {e}")
         sys.exit(1)
@@ -124,7 +125,7 @@ if __name__ == '__main__':
         "--Mapper.ba_global_function_tolerance", "0.000001" 
         ]
     try:
-        subprocess.run(colmap_hierarchical_mapper_args, check=True)
+        safe_command.run(subprocess.run, colmap_hierarchical_mapper_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing colmap hierarchical_mapper: {e}")
         sys.exit(1)
@@ -135,7 +136,7 @@ if __name__ == '__main__':
         "--base_dir", f"{args.project_dir}/camera_calibration/unrectified/sparse/0"
     ]
     try:
-        subprocess.run(simplify_images_args, check=True)
+        safe_command.run(subprocess.run, simplify_images_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing simplify_images: {e}")
         sys.exit(1)
@@ -151,7 +152,7 @@ if __name__ == '__main__':
         "--max_image_size", "2048",
         ]
     try:
-        subprocess.run(colmap_image_undistorter_args, check=True)
+        safe_command.run(subprocess.run, colmap_image_undistorter_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing image_undistorter: {e}")
         sys.exit(1)
@@ -175,7 +176,7 @@ if __name__ == '__main__':
             "--max_image_size", "2048",
             ]
         try:
-            subprocess.run(colmap_image_undistorter_args, check=True)
+            safe_command.run(subprocess.run, colmap_image_undistorter_args, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error executing image_undistorter: {e}")
             sys.exit(1)
@@ -186,7 +187,7 @@ if __name__ == '__main__':
             "--out_dir", f"{args.project_dir}/camera_calibration/rectified/masks"
         ]
         try:
-            subprocess.run(make_mask_uint8_args, check=True)
+            safe_command.run(subprocess.run, make_mask_uint8_args, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error executing make_colmap_custom_matcher: {e}")
             sys.exit(1)
@@ -202,7 +203,7 @@ if __name__ == '__main__':
             "--output_path", f"{args.project_dir}/camera_calibration/aligned/sparse/0"
         ]
     try:
-        subprocess.run(reorient_args, check=True)
+        safe_command.run(subprocess.run, reorient_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing auto_orient: {e}")
         sys.exit(1)

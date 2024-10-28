@@ -14,6 +14,7 @@ import subprocess
 import argparse
 import time, platform
 from read_write_model import write_points3D_binary
+from security import safe_command
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -37,7 +38,7 @@ if __name__ == '__main__':
         "--database_path", os.path.join(bundle_adj_chunk, "database.db")
     ]
     try:
-        subprocess.run(gen_db_attr, check=True)
+        safe_command.run(subprocess.run, gen_db_attr, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing gen_database: {e}")
         sys.exit(1)
@@ -49,7 +50,7 @@ if __name__ == '__main__':
         "--n_neighbours", f"{matching_nb}"
     ]
     try:
-        subprocess.run(make_colmap_custom_matcher_args, check=True)
+        safe_command.run(subprocess.run, make_colmap_custom_matcher_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing custom matcher distance: {e}")
         sys.exit(1)
@@ -66,7 +67,7 @@ if __name__ == '__main__':
         "--output_type", "COLMAP"
         ]
     try:
-        subprocess.run(colmap_image_undistorter_args, check=True)
+        safe_command.run(subprocess.run, colmap_image_undistorter_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing image_undistorter: {e}")
         sys.exit(1)
@@ -80,7 +81,7 @@ if __name__ == '__main__':
         ]
     
     try:
-        subprocess.run(colmap_feature_extractor_args, check=True)
+        safe_command.run(subprocess.run, colmap_feature_extractor_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing colmap feature_extractor: {e}")
         sys.exit(1)
@@ -92,7 +93,7 @@ if __name__ == '__main__':
         "--match_list_path", f"{bundle_adj_chunk}/matching_{matching_nb}.txt"
         ]
     try:
-        subprocess.run(colmap_matches_importer_args, check=True)
+        safe_command.run(subprocess.run, colmap_matches_importer_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing colmap matches_importer: {e}")
         sys.exit(1)
@@ -136,7 +137,7 @@ if __name__ == '__main__':
             ]
         # 2 rounds of triangulation + bundle adjustment
         try:
-            subprocess.run(colmap_point_triangulator_args + [
+            safe_command.run(subprocess.run, colmap_point_triangulator_args + [
                 "--database_path", f"{bundle_adj_chunk}/database.db",
                 "--image_path", f"{bundle_adj_chunk}/images",
                 "--input_path", f"{bundle_adj_chunk}/sparse/o",
@@ -147,7 +148,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
         try:
-            subprocess.run(colmap_bundle_adjuster_args + [
+            safe_command.run(subprocess.run, colmap_bundle_adjuster_args + [
                 "--input_path", f"{bundle_adj_chunk}/sparse/t",
                 "--output_path", f"{bundle_adj_chunk}/sparse/b",
             ], check=True)
@@ -156,7 +157,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
         try:
-            subprocess.run(colmap_point_triangulator_args + [
+            safe_command.run(subprocess.run, colmap_point_triangulator_args + [
                 "--database_path", f"{bundle_adj_chunk}/database.db",
                 "--image_path", f"{bundle_adj_chunk}/images",
                 "--input_path", f"{bundle_adj_chunk}/sparse/b",
@@ -167,7 +168,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
         try:
-            subprocess.run(colmap_bundle_adjuster_args + [
+            safe_command.run(subprocess.run, colmap_bundle_adjuster_args + [
                 "--input_path", f"{bundle_adj_chunk}/sparse/t2",
                 "--output_path", f"{bundle_adj_chunk}/sparse/0",
             ], check=True)
@@ -184,7 +185,7 @@ if __name__ == '__main__':
 
     ## Correct slight shifts that might have happened during bundle adjustments
     try:
-        subprocess.run(transform_colmap_args, check=True)
+        safe_command.run(subprocess.run, transform_colmap_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing transform_colmap_args: {e}")
         sys.exit(1)
