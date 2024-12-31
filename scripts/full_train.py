@@ -109,7 +109,7 @@ if __name__ == '__main__':
                 train_coarse_args += " " + args.extra_training_args
 
             try:
-                subprocess.run(train_coarse_args, shell=True, check=True)
+                subprocess.run(train_coarse_args, shell=False, check=True)
             except subprocess.CalledProcessError as e:
                 print(f"Error executing train_coarse: {e}")
                 sys.exit(1)
@@ -175,7 +175,7 @@ if __name__ == '__main__':
                         train_chunk_args + " -s "+ source_chunk + 
                         " --model_path " + trained_chunk +
                         " --bounds_file "+ source_chunk,
-                        shell=True, check=True
+                        shell=False, check=True
                     )
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing train_single: {e}")
@@ -192,7 +192,7 @@ if __name__ == '__main__':
                         trained_chunk,
                         os.path.join(output_dir, "scaffold/point_cloud/iteration_30000")
                     ]),
-                    shell=True, check=True, text=True
+                    shell=False, check=True, text=True
                 )
             except subprocess.CalledProcessError as e:
                 print(f"Error executing hierarchy_creator: {e}")
@@ -206,7 +206,7 @@ if __name__ == '__main__':
                     post_opt_chunk_args + " -s "+ source_chunk + 
                     " --model_path " + trained_chunk +
                     " --hierarchy " + os.path.join(trained_chunk, "hierarchy.hier"),
-                    shell=True, check=True
+                    shell=False, check=True
                 )
             except subprocess.CalledProcessError as e:
                 print(f"Error executing train_post: {e}")
