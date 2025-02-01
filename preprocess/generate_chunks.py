@@ -13,11 +13,12 @@ import os, sys
 import subprocess
 import argparse
 import time, platform
+from security import safe_command
 
 def submit_job(slurm_args):
     """Submit a job using sbatch and return the job ID."""    
     try:
-        result = subprocess.run(slurm_args, capture_output=True)
+        result = safe_command.run(subprocess.run, slurm_args, capture_output=True)
     except subprocess.CalledProcessError as e:
         print(f"Error when submitting a job: {e}")
         sys.exit(1)
@@ -75,7 +76,7 @@ if __name__ == '__main__':
             "--output_path", f"{chunks_dir}/raw_chunks",
         ]
     try:
-        subprocess.run(make_chunk_args, check=True)
+        safe_command.run(subprocess.run, make_chunk_args, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing image_undistorter: {e}")
         sys.exit(1)
@@ -110,8 +111,7 @@ if __name__ == '__main__':
                 ]
                 if args.skip_bundle_adjustment:
                     prepare_chunk_args.append("--skip_bundle_adjustment")
-                job = subprocess.Popen(
-                    prepare_chunk_args,
+                job = safe_command.run(subprocess.Popen, prepare_chunk_args,
                     stderr=open(f"{in_dir}/log.err", 'w'), 
                     stdout=open(f"{in_dir}/log.out", 'w'),
                 )
