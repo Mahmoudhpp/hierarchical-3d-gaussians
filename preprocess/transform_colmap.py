@@ -122,9 +122,9 @@ if __name__ == '__main__':
     t_aligned = (-R_aligned@center_aligned[...,None])[...,0]
 
     with open(f"{args.in_dir}/center.txt", 'r') as f:
-        center = np.array(tuple(map(float, f.readline().strip().split())))
+        center = np.array(tuple(map(float, f.readline(5_000_000).strip().split())))
     with open(f"{args.in_dir}/extent.txt", 'r') as f:
-        extent = np.array(tuple(map(float, f.readline().strip().split())))
+        extent = np.array(tuple(map(float, f.readline(5_000_000).strip().split())))
 
     corner_min = center - 1.1 * extent / 2
     corner_max = center + 1.1 * extent / 2
