@@ -13,6 +13,7 @@ import sys, os
 import subprocess
 import argparse
 import time
+from security import safe_command
 
 
 if __name__ == '__main__':
@@ -31,7 +32,7 @@ if __name__ == '__main__':
             "--depths_dir", args.depths_dir, 
         ]
         try:
-            subprocess.run(make_depth_scale_args, check=True)
+            safe_command.run(subprocess.run, make_depth_scale_args, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error executing make_depth_scale: {e}")
             sys.exit(1)
