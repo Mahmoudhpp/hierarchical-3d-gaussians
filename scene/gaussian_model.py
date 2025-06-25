@@ -215,13 +215,13 @@ class GaussianModel:
             rots_scaffold = torch.from_numpy(rots_scaffold).float()
 
             with open(scaffold_file + "/pc_info.txt") as f:
-                skybox_points = int(f.readline())
+                skybox_points = int(f.readline(5_000_000))
 
             self.skybox_points = skybox_points
             with open(os.path.join(bounds_file, "center.txt")) as centerfile:
                 with open(os.path.join(bounds_file, "extent.txt")) as extentfile:
-                    centerline = centerfile.readline()
-                    extentline = extentfile.readline()
+                    centerline = centerfile.readline(5_000_000)
+                    extentline = extentfile.readline(5_000_000)
 
                     c = centerline.split(' ')
                     e = extentline.split(' ')
@@ -364,7 +364,7 @@ class GaussianModel:
             rots_scaffold = torch.from_numpy(rots_scaffold).float()
 
             with open(scaffold_file + "/pc_info.txt") as f:
-                    skybox_points = int(f.readline())
+                    skybox_points = int(f.readline(5_000_000))
 
             self.skybox_points = skybox_points
 
