@@ -13,9 +13,9 @@ import numpy as np
 import argparse
 import os
 import shutil
-import random
 import torch
 from read_write_model import *
+import secrets
 
 Transform = collections.namedtuple(
     "Transform", ["t0", "t1", "s0", "s1", "R"]
@@ -53,7 +53,7 @@ def get_nb_pts(image_metas):
     return n_pts + 1
 
 if __name__ == '__main__':
-    random.seed(0)
+    secrets.SystemRandom().seed(0)
     parser = argparse.ArgumentParser()
     parser.add_argument('--in_dir', required=True)
     parser.add_argument('--new_colmap_dir', required=True)

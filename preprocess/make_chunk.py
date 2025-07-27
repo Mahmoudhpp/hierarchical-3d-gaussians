@@ -14,9 +14,9 @@ import argparse
 import cv2
 from joblib import delayed, Parallel
 import os
-import random
 from read_write_model import *
 import json
+import secrets
 
 def get_nb_pts(image_metas):
     n_pts = 0
@@ -28,7 +28,7 @@ def get_nb_pts(image_metas):
     return n_pts + 1
 
 if __name__ == '__main__':
-    random.seed(0)
+    secrets.SystemRandom().seed(0)
     parser = argparse.ArgumentParser()
     parser.add_argument('--base_dir', required=True)
     parser.add_argument('--images_dir', required=True)
@@ -172,10 +172,10 @@ if __name__ == '__main__':
                 valid_cam[cam_idx] = n_pts > 50
             # If within 2x of the chunk
             elif np.all(cam_centers[cam_idx] < extended_corner_max) and np.all(cam_centers[cam_idx] > extended_corner_min):
-                valid_cam[cam_idx] = n_pts > 50 and random.uniform(0, 1) > 0.5
+                valid_cam[cam_idx] = n_pts > 50 and secrets.SystemRandom().uniform(0, 1) > 0.5
             # All distances
             if (not valid_cam[cam_idx]) and n_pts > 10 and args.add_far_cams:
-                valid_cam[cam_idx] = random.uniform(0, 0.5) < (float(n_pts) / len(image_points3d))
+                valid_cam[cam_idx] = secrets.SystemRandom().uniform(0, 0.5) < (float(n_pts) / len(image_points3d))
             
         print(f"{valid_cam.sum()} valid cameras after visibility-base selection")
         if args.lapla_thresh > 0:
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
         if valid_cam.sum() > args.max_n_cams:
             for _ in range(valid_cam.sum() - args.max_n_cams):
-                remove_idx = random.randint(0, valid_cam.sum() - 1)
+                remove_idx = secrets.SystemRandom().randint(0, valid_cam.sum() - 1)
                 remove_idx_glob = np.arange(len(valid_cam))[valid_cam][remove_idx]
                 valid_cam[remove_idx_glob] = False
 
