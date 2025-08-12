@@ -11,3 +11,4 @@ matplotlib
 submodules/hierarchy-rasterizer
 submodules/simple-knn
 submodules/gaussianhierarchy
+security==1.3.1
