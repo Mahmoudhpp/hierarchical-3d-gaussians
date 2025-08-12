@@ -4,11 +4,12 @@ import argparse
 import time
 import platform
 from pathlib import Path
+from security import safe_command
 
 def submit_job(slurm_args):
     """Submit a job using sbatch and return the job ID."""    
     try:
-        result = subprocess.run(slurm_args, capture_output=True)
+        result = safe_command.run(subprocess.run, slurm_args, capture_output=True)
     except subprocess.CalledProcessError as e:
         print(f"Error when submitting a job: {e}")
         sys.exit(1)
@@ -109,7 +110,7 @@ if __name__ == '__main__':
                 train_coarse_args += " " + args.extra_training_args
 
             try:
-                subprocess.run(train_coarse_args, shell=True, check=True)
+                safe_command.run(subprocess.run, train_coarse_args, shell=True, check=True)
             except subprocess.CalledProcessError as e:
                 print(f"Error executing train_coarse: {e}")
                 sys.exit(1)
@@ -171,8 +172,7 @@ if __name__ == '__main__':
             else:
                 print(f"Training chunk {chunk_name}")
                 try:
-                    subprocess.run(
-                        train_chunk_args + " -s "+ source_chunk + 
+                    safe_command.run(subprocess.run, train_chunk_args + " -s "+ source_chunk + 
                         " --model_path " + trained_chunk +
                         " --bounds_file "+ source_chunk,
                         shell=True, check=True
@@ -185,8 +185,7 @@ if __name__ == '__main__':
                 # Generate a hierarchy within each chunks
             print(f"Generating hierarchy for chunk {chunk_name}")
             try:
-                subprocess.run(
-                hierarchy_creator_args + " ".join([
+                safe_command.run(subprocess.run, hierarchy_creator_args + " ".join([
                         os.path.join(trained_chunk, "point_cloud/iteration_30000/point_cloud.ply"),
                         source_chunk,
                         trained_chunk,
@@ -202,8 +201,7 @@ if __name__ == '__main__':
             # Post optimization on each chunks
             print(f"post optimizing chunk {chunk_name}")
             try:
-                subprocess.run(
-                    post_opt_chunk_args + " -s "+ source_chunk + 
+                safe_command.run(subprocess.run, post_opt_chunk_args + " -s "+ source_chunk + 
                     " --model_path " + trained_chunk +
                     " --hierarchy " + os.path.join(trained_chunk, "hierarchy.hier"),
                     shell=True, check=True
@@ -258,7 +256,7 @@ if __name__ == '__main__':
             time.sleep(10)
     else:
         try:
-            subprocess.run(consolidation_args, check=True)
+            safe_command.run(subprocess.run, consolidation_args, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error executing consolidation: {e}")
             sys.exit(1)
